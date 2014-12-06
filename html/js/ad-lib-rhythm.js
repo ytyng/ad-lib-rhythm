@@ -34,7 +34,14 @@ $(function () {
     }
 
     var animating = false;
+
+    var helpMessage = $('#help-message');
+
     $(window).click(function (event) {
+
+        if (helpMessage.is(':visible')) {
+            helpMessage.fadeOut();
+        }
 
         if (animating) {
             return false;
@@ -65,10 +72,7 @@ $(function () {
             div.append(span);
 
         }
-
         $(document.body).append(div);
         return false;
-
     });
-
 });
