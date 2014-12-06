@@ -37,7 +37,7 @@ $(function () {
 
     var helpMessage = $('#help-message');
 
-    $(document.body).click(function (event) {
+    $(document.body).bind("click touchend", function (event) {
 
         if (helpMessage.is(':visible')) {
             helpMessage.fadeOut();
