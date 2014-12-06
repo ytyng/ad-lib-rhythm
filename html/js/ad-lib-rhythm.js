@@ -37,7 +37,7 @@ $(function () {
 
     var helpMessage = $('#help-message');
 
-    $(window).click(function (event) {
+    $(document.body).click(function (event) {
 
         if (helpMessage.is(':visible')) {
             helpMessage.fadeOut();
