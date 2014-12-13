@@ -14,27 +14,33 @@ body {
     font-family: sans-serif;
 }
 
-div.section, span.bar, img.note {
+div.row, span.bar, img.note {
+    /* cancel selection by mouse */
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
 }
 
-div.section {
+div.row {
     text-align: center;
+    height: 50%;
+    border-bottom: 1px solid #000;
 }
 
 span.bar {
     display: inline-block;
-    border: 1px solid #000;
-    width: 50%;
-    padding: 2%
+    border-right: 1px solid #000;
+    height: 100%;
+    text-align: center;
+}
+
+span.bar:last-child {
+    border-right: none;
 }
 
 img.note {
     display: inline-block;
-    width: 25%;
 }
 
 div#help-message {

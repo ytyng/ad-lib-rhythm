@@ -1,5 +1,8 @@
 $(function () {
 
+    var noteSizeW = 200;
+    var noteSizeH = 250;
+
     var noteImages = [
         // 画像URL, 出現割合
         ['images/note-00.png', 2],
@@ -18,7 +21,6 @@ $(function () {
 
     /**
      * 音符URLを1つ選択
-     * @returns {*}
      */
     function selectNoteImage() {
         var r = Math.floor(Math.random() * totalIncidence);
@@ -33,46 +35,84 @@ $(function () {
         alert("selectNote Error: r=" + r);
     }
 
+    /**
+     * getクエリから値を取得
+     */
+    function getParameterByName(name, def) {
+        if (!def) def = null;
+        name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+        var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+            results = regex.exec(location.search);
+        return results === null ? def : decodeURIComponent(results[1].replace(/\+/g, " "));
+    }
+
+    /**
+     * note のスタイルを作成
+     */
+    function calculateNoteStyle(body, rowsInPage, barsInRow, notesInBar) {
+        var barWidth = body.width() / barsInRow - 2;  // 2: left and right border width
+        var barHeight = body.height() / rowsInPage - 2;  // 2: top and bottom border height
+        var boxWidth = barWidth / notesInBar;
+        // boxWidthに内接する最大の大きさ
+        var wRatio = boxWidth / noteSizeW;
+        var hRatio = barHeight / noteSizeH;
+        var ratio = Math.min(wRatio, hRatio);
+        return {
+            "width": Math.floor(noteSizeW * ratio) + "px",
+            "height": Math.floor(noteSizeH * ratio) + "px",
+            "margin-top": (barHeight - (noteSizeH * ratio)) / 2 + "px"
+        }
+    }
+
     var animating = false;
 
     var helpMessage = $('#help-message');
+    var body = $(document.body);
 
-    $(document.body).bind("click touchend", function (event) {
-
+    body.bind("click touchend", function () {
+        // hide help message (first time)
         if (helpMessage.is(':visible')) {
             helpMessage.fadeOut();
         }
 
+        // overflow animation with lock
         if (animating) {
             return false;
         }
-
-        var sections = $('div.section');
-        if (sections.length >= 2) {
+        var rowsInPage = getParameterByName('r', 2);
+        var rows = $('div.row');
+        if (rows.length >= rowsInPage) {
             animating = true;
-            var firstSection = sections.filter(":first");
-            firstSection.animate({
-                marginTop: firstSection.height() * -1
-
+            var firstRow = rows.filter(":first");
+            firstRow.animate({
+                marginTop: firstRow.height() * -1
             }, 500, 'linear', function () {
-                firstSection.remove();
+                firstRow.remove();
                 animating = false;
             });
         }
 
-        var div = $('<div />').addClass('section');
-        for (var bar = 0; bar < 2; bar++) {
-            var span = $('<span />').addClass('bar');
+        // generate rows
+        var barsInRow = getParameterByName('b', 2);
+        var div = $('<div />').addClass('row').css({height: 100 / rowsInPage + "%"});
+        var notesInBar = 4;
 
-            for (var i = 0; i < 4; i++) {
+        // calculate note size
+        var noteStyle = calculateNoteStyle(body, rowsInPage, barsInRow, notesInBar);
+
+        // generate notes and append
+        for (var bar = 0; bar < barsInRow; bar++) {
+            var span = $('<span />').addClass('bar').css({width: 100 / barsInRow + "%"});
+
+            for (var i = 0; i < notesInBar; i++) {
                 var imageUrl = selectNoteImage();
-                var img = $('<img />').addClass('note').attr('src', imageUrl);
+                var img = $('<img />').addClass('note').attr('src', imageUrl).css(noteStyle);
                 span.append(img);
             }
             div.append(span);
 
         }
-        $(document.body).append(div);
+        body.append(div);
         return false;
     });
 });
