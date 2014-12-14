@@ -86,7 +86,7 @@ $(function () {
             var firstRow = rows.filter(":first");
             firstRow.animate({
                 marginTop: firstRow.height() * -1
-            }, 500, 'linear', function () {
+            }, 200, 'linear', function () {
                 firstRow.remove();
                 animating = false;
             });
@@ -115,5 +115,14 @@ $(function () {
         body.append(div);
         return false;
     }
-    body.bind("click touchend keydown", displayNextRow);
+
+    body.bind("click touchend", displayNextRow);
+
+    body.bind("keydown", function (ev) {
+        if (!(ev.keyCode == 16 || ev.keyCode == 17 ||
+            ev.keyCode == 18 || ev.keyCode == 91 ||
+            ev.shiftKey || ev.ctrlKey || ev.altKey)) {
+            displayNextRow(ev);
+        }
+    });
 });
