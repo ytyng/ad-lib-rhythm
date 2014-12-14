@@ -69,7 +69,7 @@ $(function () {
     var helpMessage = $('#help-message');
     var body = $(document.body);
 
-    body.bind("click touchend", function () {
+    function displayNextRow() {
         // hide help message (first time)
         if (helpMessage.is(':visible')) {
             helpMessage.fadeOut();
@@ -114,5 +114,6 @@ $(function () {
         }
         body.append(div);
         return false;
-    });
+    }
+    body.bind("click touchend keydown", displayNextRow);
 });
